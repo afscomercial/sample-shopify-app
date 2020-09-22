@@ -1,13 +1,7 @@
 import gql from 'graphql-tag';
 import { useQuery } from '@apollo/react-hooks';
-import {
-  Card,
-  Button,
-  ResourceList,
-  Stack,
-  TextStyle,
-  Thumbnail,
-} from '@shopify/polaris';
+// eslint-disable-next-line no-unused-vars
+import { Card, Button, ResourceList, Stack, TextStyle, Thumbnail } from '@shopify/polaris';
 import store from 'store-js';
 
 const GET_PRODUCTS_BY_ID = gql`
@@ -56,11 +50,7 @@ function ProductList() {
           renderItem={(item) => {
             const media = (
               <Thumbnail
-                source={
-                  item.images.edges[0]
-                    ? item.images.edges[0].node.originalSrc
-                    : ''
-                }
+                source={item.images.edges[0] ? item.images.edges[0].node.originalSrc : ''}
                 alt={item.images.edges[0] ? item.images.edges[0].altText : ''}
               />
             );

@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+/* eslint-disable import/order */
+/* eslint-disable no-unused-vars */
+import { ResourcePicker } from '@shopify/app-bridge-react';
 import { EmptyState, Layout, Page } from '@shopify/polaris';
-import { ResourcePicker, TitleBar } from '@shopify/app-bridge-react';
+import React, { useState } from 'react';
 import store from 'store-js';
 import ProductList from '../components/ProductList';
+import axios from 'axios';
 
 function Index() {
   const [modal, setModal] = useState({ open: false });
@@ -13,15 +16,30 @@ function Index() {
     setModal({ open: false });
     store.set('ids', idsFromResources);
     console.log('this is product ids', store.get('ids'));
-    // const selectedProducts = resources.selection;
+    const selectedProducts = resources.selection;
 
     // deleteApiData();
 
-    // selectedProducts.map((product) => makeApiCall(product));
+    selectedProducts.map((product) => makeApiCall(product));
+  }
+
+  function makeApiCall(products) {
+    const url = '/api/products';
+
+    axios
+      .post(url, products)
+      .then((result) => console.log(result))
+      .catch((error) => console.log(error));
   }
 
   return (
     <Page>
+      <TitleBar
+        primaryAction={{
+          content: 'Select New Products',
+          onAction: () => setModal({ open: true }),
+        }}
+      />
       <ResourcePicker
         resourceType="Product"
         showVariants={false}
