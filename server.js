@@ -19,7 +19,7 @@ const handle = app.getRequestHandler();
 const { SHOPIFY_API_SECRET_KEY, SHOPIFY_API_KEY } = process.env;
 
 // const server = new Koa();
-// const router = new KoaRouter();
+const router = new KoaRouter();
 
 // var products = [];
 
@@ -88,7 +88,7 @@ app.prepare().then(() => {
   server.use(graphQLProxy({ version: ApiVersion.October19 }));
   server.use(verifyRequest());
 
-  server.use(router.allowMethods());
+  server.use(router.allowedMethods());
   server.use(router.routes());
 
   server.use(async (ctx) => {
