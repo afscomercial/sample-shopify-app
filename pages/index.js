@@ -1,6 +1,6 @@
 /* eslint-disable import/order */
 /* eslint-disable no-unused-vars */
-import { ResourcePicker } from '@shopify/app-bridge-react';
+import { ResourcePicker, TitleBar } from '@shopify/app-bridge-react';
 import { EmptyState, Layout, Page } from '@shopify/polaris';
 import React, { useState } from 'react';
 import store from 'store-js';
