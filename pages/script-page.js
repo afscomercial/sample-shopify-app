@@ -1,13 +1,5 @@
-/* eslint-disable no-unused-vars */
 import { useMutation, useQuery } from '@apollo/react-hooks';
-import {
-  Button,
-  Card,
-  Layout,
-  Page,
-  ResourceList,
-  Stack,
-} from '@shopify/polaris';
+import { Button, Card, Layout, Page, ResourceList, Stack } from '@shopify/polaris';
 import gql from 'graphql-tag';
 
 const CREATE_SCRIPT_TAG = gql`
@@ -76,8 +68,7 @@ function ScriptPage() {
                 createScripts({
                   variables: {
                     input: {
-                      src:
-                        'https://afscomercial-shopify-app.herokuapp.com/test-script.js',
+                      src: 'https://afscomercial-shopify-app.herokuapp.com/test-script.js',
                       displayScope: 'ALL',
                     },
                   },
