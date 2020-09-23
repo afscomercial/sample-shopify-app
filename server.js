@@ -16,14 +16,14 @@ const koaBody = require('koa-body');
 dotenv.config();
 const { default: graphQLProxy } = require('@shopify/koa-shopify-graphql-proxy');
 const { ApiVersion } = require('@shopify/koa-shopify-graphql-proxy');
-const {receiveWebhook, registerWebhook} = require('@shopify/koa-shopify-webhooks');
+const { receiveWebhook, registerWebhook } = require('@shopify/koa-shopify-webhooks');
 
 const port = parseInt(process.env.PORT, 10) || 3000;
-const dev = (process.env.NODE_ENV !== 'production');
+const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
-const { SHOPIFY_API_SECRET_KEY, SHOPIFY_API_KEY, HOST, } = process.env;
+const { SHOPIFY_API_SECRET_KEY, SHOPIFY_API_KEY, HOST } = process.env;
 
 const server = new Koa();
 const router = new KoaRouter();
@@ -31,7 +31,7 @@ const productsUrl = '/api/products';
 
 let products = [];
 
-router.get(productsUrl,  (ctx) => {
+router.get(productsUrl, (ctx) => {
   try {
     ctx.body = {
       status: 'success',
@@ -61,10 +61,6 @@ router.delete(productsUrl, koaBody(), (ctx) => {
   }
 });
 
-// Router Middleware
-server.use(router.allowedMethods());
-server.use(router.routes());
-
 app.prepare().then(() => {
   server.use(session({ secure: true, sameSite: 'none' }, server));
   server.keys = [SHOPIFY_API_SECRET_KEY];
@@ -86,9 +82,9 @@ app.prepare().then(() => {
           topic: 'PRODUCTS_CREATE',
           accessToken,
           shop,
-          apiVersion: ApiVersion.October19
+          apiVersion: ApiVersion.October19,
         });
-     
+
         if (registration.success) {
           console.log('Successfully registered webhook!');
         } else {
@@ -100,14 +96,22 @@ app.prepare().then(() => {
     }),
   );
 
-  server.use(graphQLProxy({ version: ApiVersion.October19 }));
-  server.use(verifyRequest());
+  const webhook = receiveWebhook({ secret: SHOPIFY_API_SECRET_KEY });
 
-  server.use(async (ctx) => {
+  router.post('/webhooks/products/create', webhook, (ctx) => {
+    console.log('received webhook: ', ctx.state.webhook);
+  });
+
+  server.use(graphQLProxy({ version: ApiVersion.October19 }));
+  router.get('*', verifyRequest(), async (ctx) => {
     await handle(ctx.req, ctx.res);
     ctx.respond = false;
     ctx.res.statusCode = 200;
   });
+
+  // Router Middleware
+  server.use(router.allowedMethods());
+  server.use(router.routes());
 
   server.listen(port, () => {
     console.log(`> Ready on port:${port}`);
