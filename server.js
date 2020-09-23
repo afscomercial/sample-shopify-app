@@ -1,3 +1,4 @@
+/* eslint-disable @shopify/binary-assignment-parens */
 /* eslint-disable require-atomic-updates */
 /* eslint-disable no-console */
 /* eslint-disable promise/catch-or-return */
@@ -19,7 +20,7 @@ const { ApiVersion } = require('@shopify/koa-shopify-graphql-proxy');
 const { receiveWebhook, registerWebhook } = require('@shopify/koa-shopify-webhooks');
 
 const port = parseInt(process.env.PORT, 10) || 3000;
-const dev = (process.env.NODE_ENV !== 'production');
+const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
@@ -77,6 +78,7 @@ app.prepare().then(() => {
           secure: true,
           sameSite: 'none',
         });
+
         const registration = await registerWebhook({
           address: `${HOST}/webhooks/products/create`,
           topic: 'PRODUCTS_CREATE',
@@ -105,11 +107,18 @@ app.prepare().then(() => {
   });
 
   server.use(graphQLProxy({ version: ApiVersion.October19 }));
-  router.get('*', verifyRequest(), async (ctx) => {
+  server.use(verifyRequest());
+
+  server.use(async (ctx) => {
     await handle(ctx.req, ctx.res);
     ctx.respond = false;
     ctx.res.statusCode = 200;
   });
+  // router.get('*', verifyRequest(), async (ctx) => {
+  //     await handle(ctx.req, ctx.res);
+  //     ctx.respond = false;
+  //     ctx.res.statusCode = 200;
+  // });
 
   // Router Middleware
   server.use(router.allowedMethods());
