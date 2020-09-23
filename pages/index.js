@@ -18,9 +18,15 @@ function Index() {
     console.log('this is product ids', store.get('ids'));
     const selectedProducts = resources.selection;
 
-    // deleteApiData();
+    deleteApiData();
 
     selectedProducts.map((product) => makeApiCall(product));
+  }
+
+  function deleteApiData() {
+    const url = '/api/products';
+
+    axios.delete(url);
   }
 
   function makeApiCall(products) {
