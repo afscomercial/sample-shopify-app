@@ -1,29 +1,20 @@
 {
   "env": {
-    "browser": true,
     "es2021": true,
     "node": true
   },
   "extends": [
-    "plugin:@shopify/esnext",
-    "plugin:@shopify/polaris",
     "plugin:sonarjs/recommended",
-    "plugin:react/recommended",
     "prettier",
     "prettier/babel"
   ],
   "parserOptions": {
-    "ecmaFeatures": {
-      "jsx": true
-    },
     "ecmaVersion": 12,
     "sourceType": "module"
   },
   "rules": {
     "linebreak-style": ["error", "windows"],
     "quotes": ["error", "single"],
-    "semi": ["error", "always"],
-    "no-console": "off"
-  },
-  "ignorePatterns": ["/server/*.js"]
+    "semi": ["error", "always"]
+  }
 }

@@ -1,11 +1,10 @@
-/* eslint-disable import/order */
-/* eslint-disable no-unused-vars */
 import { ResourcePicker, TitleBar } from '@shopify/app-bridge-react';
 import { EmptyState, Layout, Page } from '@shopify/polaris';
 import React, { useState } from 'react';
 import store from 'store-js';
-import ProductList from '../components/ProductList';
 import axios from 'axios';
+
+import ProductList from '../components/ProductList';
 
 function Index() {
   const [modal, setModal] = useState({ open: false });

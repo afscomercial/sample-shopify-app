@@ -1,9 +1,3 @@
-/* eslint-disable @shopify/binary-assignment-parens */
-/* eslint-disable require-atomic-updates */
-/* eslint-disable no-console */
-/* eslint-disable promise/catch-or-return */
-/* eslint-disable no-process-env */
-/* eslint-disable import/order */
 require('isomorphic-fetch');
 const dotenv = require('dotenv');
 const Koa = require('koa');
