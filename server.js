@@ -28,6 +28,7 @@ const { SHOPIFY_API_SECRET_KEY, SHOPIFY_API_KEY, HOST } = process.env;
 
 const server = new Koa();
 const router = new KoaRouter();
+const webhook = receiveWebhook({ secret: SHOPIFY_API_SECRET_KEY });
 const productsUrl = '/api/products';
 
 let products = [];
@@ -61,6 +62,16 @@ router.delete(productsUrl, koaBody(), (ctx) => {
     console.log(error);
   }
 });
+
+router.post('/webhooks/products/create', webhook, async (ctx) => {
+  const state = ctx.state.webhook;
+  await products.push(state);
+  console.log('received webhook: ', ctx.state.webhook);
+});
+
+// Router Middleware
+server.use(router.allowedMethods());
+server.use(router.routes());
 
 app.prepare().then(() => {
   server.use(session({ secure: true, sameSite: 'none' }, server));
@@ -98,20 +109,8 @@ app.prepare().then(() => {
     }),
   );
 
-  const webhook = receiveWebhook({ secret: SHOPIFY_API_SECRET_KEY });
-
-  router.post('/webhooks/products/create', webhook, async (ctx) => {
-    const state = ctx.state.webhook;
-    await products.push(state);
-    console.log('received webhook: ', ctx.state.webhook);
-  });
-
   server.use(graphQLProxy({ version: ApiVersion.October19 }));
   server.use(verifyRequest());
-
-  // Router Middleware
-  server.use(router.allowedMethods());
-  server.use(router.routes());
 
   server.use(async (ctx) => {
     await handle(ctx.req, ctx.res);
