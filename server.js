@@ -19,7 +19,7 @@ const { ApiVersion } = require('@shopify/koa-shopify-graphql-proxy');
 const { receiveWebhook, registerWebhook } = require('@shopify/koa-shopify-webhooks');
 
 const port = parseInt(process.env.PORT, 10) || 3000;
-const dev = process.env.NODE_ENV !== 'production';
+const dev = (process.env.NODE_ENV !== 'production');
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
@@ -98,7 +98,9 @@ app.prepare().then(() => {
 
   const webhook = receiveWebhook({ secret: SHOPIFY_API_SECRET_KEY });
 
-  router.post('/webhooks/products/create', webhook, (ctx) => {
+  router.post('/webhooks/products/create', webhook, async (ctx) => {
+    const state = ctx.state.webhook;
+    await products.push(state);
     console.log('received webhook: ', ctx.state.webhook);
   });
 
