@@ -109,6 +109,10 @@ app.prepare().then(() => {
   server.use(graphQLProxy({ version: ApiVersion.October19 }));
   server.use(verifyRequest());
 
+  // Router Middleware
+  server.use(router.allowedMethods());
+  server.use(router.routes());
+
   server.use(async (ctx) => {
     await handle(ctx.req, ctx.res);
     ctx.respond = false;
@@ -119,10 +123,6 @@ app.prepare().then(() => {
   //     ctx.respond = false;
   //     ctx.res.statusCode = 200;
   // });
-
-  // Router Middleware
-  server.use(router.allowedMethods());
-  server.use(router.routes());
 
   server.listen(port, () => {
     console.log(`> Ready on port:${port}`);
